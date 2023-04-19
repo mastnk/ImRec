@@ -27,9 +27,6 @@ N=4
 X = torch.rand( N, 3 )
 net = TwoLayers()
 
-print( net.fc1.weight.data.shape, net.fc1.weight.data )
-print( net.fc1.bias.data.shape, net.fc1.bias.data )
-
 crr = 0
 
 ### find MIN ###
