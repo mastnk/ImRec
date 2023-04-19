@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-print( 'Enter your ID (22M12345): ', end='' )
+print( 'Enter your ID (e.g. 22M12345): ', end='' )
 txt = input().strip()
 print()
 
