@@ -27,7 +27,7 @@ crr = 0
 ### logical AND ###
 # edit those three parameters
 weight = [0.5, 0.5]
-bias = [0.0];
+bias = [0.0]
 # edit those three parameters
 
 print( "Logical AND" )
@@ -44,7 +44,7 @@ print()
 ### logical OR ###
 # edit those three parameters
 weight = [0.5, 0.5]
-bias = [0.0];
+bias = [0.0]
 # edit those three parameters
 
 print( "Logical OR" )
@@ -62,7 +62,7 @@ print()
 ### logical NOT x1 ###
 # edit those three parameters
 weight = [0.5, 0.5]
-bias = [0.0];
+bias = [0.0]
 # edit those three parameters
 
 print( "Logical NOT x1" )
