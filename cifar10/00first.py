@@ -9,6 +9,8 @@ import torchvision
 import torchvision.transforms as transforms
 import torch.optim as optim
 
+import time
+
 batch_size = 4
 epochs = 2
 
@@ -66,6 +68,7 @@ net = Net()
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
+t0 = time.perf_counter()
 for epoch in range(epochs):
 
     running_loss = 0.0
@@ -80,9 +83,11 @@ for epoch in range(epochs):
 
         running_loss += loss.item()
         if i % 2000 == 1999:
-            print('[%d, %5d] loss: %.3f' %
-                  (epoch + 1, i + 1, running_loss / 2000))
+            t1 = time.perf_counter()
+            print('[%d, %5d] loss: %.3f, time: %.3f' %
+                  (epoch + 1, i + 1, running_loss / 2000, t1-t0))
             running_loss = 0.0
+            t0 = t1
 
 print('Finished Training')
 
