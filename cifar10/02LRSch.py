@@ -8,6 +8,7 @@ import torch.nn.functional as F
 import torchvision
 import torchvision.transforms as transforms
 import torch.optim as optim
+import torch.optim.lr_scheduler as sch
 
 import torch.backends.cudnn as cudnn
 
@@ -78,6 +79,7 @@ else:
 
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+scheduler = sch.StepLR(optimizer, step_size=1, gamma=0.9)
 
 t0 = time.perf_counter()
 for epoch in range(epochs):
@@ -97,10 +99,11 @@ for epoch in range(epochs):
 
         if i % 100 == 99:
             t1 = time.perf_counter()
-            print('[%d, %5d] loss: %.3f, time: %.3f' %
-                  (epoch + 1, i + 1, running_loss / 2000, t1-t0))
+            print('[%d, %5d, %.2e] loss: %.3f, time: %.3f' %
+                  (epoch + 1, i + 1, optimizer.param_groups[0]['lr'], running_loss / 2000, t1-t0))
             running_loss = 0.0
             t0 = t1
+    scheduler.step()
 
 print('Finished Training')
 
