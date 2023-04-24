@@ -79,6 +79,7 @@ else:
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
+net.train()
 t0 = time.perf_counter()
 for epoch in range(epochs):
 
@@ -104,6 +105,7 @@ for epoch in range(epochs):
 
 print('Finished Training')
 
+net.eval()
 correct = 0
 total = 0
 with torch.no_grad():
