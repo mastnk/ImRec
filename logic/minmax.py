@@ -30,6 +30,18 @@ net = TwoLayers()
 crr = 0
 
 ### find MIN ###
+# edit those parameters
+weight1 = [[1,0,0],
+           [0,1,0],
+           [0,0,1]]
+bias1 = [0,0,0];
+
+weight2 = [[1,0,0],
+           [0,1,0],
+           [0,0,1]]
+bias2 = [0,0,0];
+# edit those parameters
+
 print("find MIN:")
 w1 = torch.tensor(
  [[+1,0,0],
@@ -38,14 +50,8 @@ w1 = torch.tensor(
 b1 = torch.tensor(
  [0,0,0], dtype=torch.float32 )
 
-w2 = torch.tensor(
- [[1,0,0],
-  [0,1,0],
-  [0,0,1]], dtype=torch.float32 )
-b2 = torch.tensor(
- [0,0,0], dtype=torch.float32 )
-
-net.set_weight_bias( w1, b1, w2, b2 )
+net.set_weight_bias( torch.tensor( weight1, dtype=torch.float32 ), torch.tensor( bias1, dtype=torch.float32 ),
+                     torch.tensor( weight2, dtype=torch.float32 ), torch.tensor( bias2, dtype=torch.float32 ) )
 Y = net(X)
 Y = Y.to(dtype=torch.int32)
 for i in range(N):
@@ -60,22 +66,22 @@ for i in range(N):
 print()
 
 ### find MAX ###
+# edit those parameters
+weight1 = [[1,0,0],
+           [0,1,0],
+           [0,0,1]]
+bias1 = [0,0,0];
+
+weight2 = [[1,0,0],
+           [0,1,0],
+           [0,0,1]]
+bias2 = [0,0,0];
+# edit those parameters
+
+
 print("find MAX:")
-w1 = torch.tensor(
- [[1,0,0],
-  [0,1,0],
-  [0,0,1]], dtype=torch.float32 )
-b1 = torch.tensor(
- [0,0,0], dtype=torch.float32 )
-
-w2 = torch.tensor(
- [[1,0,0],
-  [0,1,0],
-  [0,0,1]], dtype=torch.float32 )
-b2 = torch.tensor(
- [0,0,0], dtype=torch.float32 )
-
-net.set_weight_bias( w1, b1, w2, b2 )
+net.set_weight_bias( torch.tensor( weight1, dtype=torch.float32 ), torch.tensor( bias1, dtype=torch.float32 ),
+                     torch.tensor( weight2, dtype=torch.float32 ), torch.tensor( bias2, dtype=torch.float32 ) )
 Y = net(X)
 Y = Y.to(dtype=torch.int32)
 for i in range(N):
