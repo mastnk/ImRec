@@ -8,16 +8,23 @@ import torch.nn.functional as F
 import torchvision
 import torchvision.transforms as transforms
 import torch.optim as optim
+import torch.optim.lr_scheduler as sch
+
+import torch.backends.cudnn as cudnn
 
 import time
 
-batch_size = 4
-epochs = 2
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+print( device )
 
+batch_size = 32
+epochs = 10
 
 # training data preparation
 transform = transforms.Compose(
-    [transforms.ToTensor(),
+    [transforms.RandomHorizontalFlip(),
+     transforms.RandomCrop(32, padding=4),
+     transforms.ToTensor(),
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
 trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
@@ -43,6 +50,8 @@ class Net(nn.Module):
         self.fc2 = nn.Linear(128, 64)
         self.fc3 = nn.Linear(64, 10)
 
+        self.dropout = nn.Dropout(0.5)
+
     def forward(self, x):
         x = self.conv1(x) # (B,3,32,32) -> (B,16,32,32)
         x = F.relu(x)
@@ -60,13 +69,22 @@ class Net(nn.Module):
         x = self.fc2(x) # (B,128) -> (B,64)
         x = F.relu(x)
 
+        x = self.dropout(x)
         x = self.fc3(x) # (B,64) -> (B,32)
 
         return x
 
 net = Net()
+net = net.to(device)
+if device == 'cuda':
+    cudnn.benchmark = True
+    print( 'Run with GPU' )
+else:
+    print( 'Run with CPU' )
+
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+scheduler = sch.StepLR(optimizer, step_size=1, gamma=0.9)
 
 net.train()
 t0 = time.perf_counter()
@@ -75,6 +93,7 @@ for epoch in range(epochs):
     running_loss = 0.0
     for i, data in enumerate(trainloader):
         inputs, labels = data
+        inputs, labels = inputs.to(device), labels.to(device)
 
         optimizer.zero_grad()
         outputs = net(inputs)
@@ -83,12 +102,14 @@ for epoch in range(epochs):
         optimizer.step()
 
         running_loss += loss.item()
-        if i % 2000 == 1999:
+
+        if i % 100 == 99:
             t1 = time.perf_counter()
-            print('[%d, %5d] loss: %.3f, time: %.3f' %
-                  (epoch + 1, i + 1, running_loss / 2000, t1-t0))
+            print('[%d, %5d, %.2e] loss: %.3f, time: %.3f' %
+                  (epoch + 1, i + 1, optimizer.param_groups[0]['lr'], running_loss / 2000, t1-t0))
             running_loss = 0.0
             t0 = t1
+    scheduler.step()
 
 print('Finished Training')
 
@@ -98,6 +119,7 @@ total = 0
 with torch.no_grad():
     for data in testloader:
         images, labels = data
+        images, labels = images.to(device), labels.to(device)
         outputs = net(images)
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
