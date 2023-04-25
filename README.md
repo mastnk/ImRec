@@ -43,4 +43,8 @@ It includes four models images.
 
 - [Google Colab tutorial (youtube)](https://www.youtube.com/watch?v=inN8seMm7UI)
 
+- [scikit-learn: algorithm cheat-sheet](https://scikit-learn.org/stable/tutorial/machine_learning_map/index.html)
 
+- [scikit-learn: Multiclass and multioutput algorithms](https://scikit-learn.org/stable/modules/multiclass.html)
+
+- [scikit-learn: MultiOutputClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.multioutput.MultiOutputClassifier.html#sklearn.multioutput.MultiOutputClassifier)
