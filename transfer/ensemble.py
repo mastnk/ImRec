@@ -4,11 +4,10 @@ from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 import os
+import pickle
 import glob
 import numpy as np
 
-# pip install numpy==1.19
-from sklearn.multioutput import MultiOutputClassifier
 from sklearn.linear_model import LogisticRegression
 
 from img2feat import CNN
@@ -19,6 +18,15 @@ cnn = CNN('vgg19')
 dir_train = "data/train/"
 dir_test = "data/test/"
 labels = ["0", "1", "2", "3"]
+
+def save_clf( filename, clf ):
+    with open( filename, mode='wb') as f:
+        pickle.dump(clf,f,protocol=2)
+
+def load_clf( filename ):
+    with open(filename, mode='rb') as f:
+        clf = pickle.load(f)
+    return clf
 
 def TenCrop( imgs, border=16 ):
     aug = []
@@ -36,7 +44,7 @@ def TenCrop( imgs, border=16 ):
 
 def dataset(dir, train=True, tencrop_border=16):
     X = None
-    Y = None
+    Y = []
     for i, label in enumerate(labels):
         d = os.path.join( dir, label )
         filenames = glob.glob( d+"/*.png" )
@@ -49,53 +57,34 @@ def dataset(dir, train=True, tencrop_border=16):
         if( tencrop_border > 0 ):
             imgs = TenCrop( imgs, tencrop_border )
         x = cnn( imgs )
-
-        y = np.array( [1,]+[0]*(len(labels)-1) )
-        y = np.roll( y, i )
-        if( train ): y = np.tile( y, (len(x), 1) )
-        else: y = np.tile( y, (len(filenames), 1) )
-
         if( X is None ): X=x;
         else: X = np.concatenate( [X, x], 0 )
-        if( Y is None ): Y=y;
-        else: Y = np.concatenate( [Y, y], 0 )
 
-    return X, Y
+        if( train ): n = len(x)
+        else: n = len(filenames)
+        Y += [i for _ in range(n) ]
 
-
-def softmax_proba( proba, proba_max=0.99999, n_aug=10 ):
-    proba = np.clip( proba[:,:,1].transpose(1,0), 0, proba_max )
-    logit = np.log( proba ) - np.log( 1-proba )
-
-    if( n_aug > 1 ):
-        logit = np.reshape( logit, [logit.shape[0]//n_aug, n_aug, logit.shape[1]] )
-        logit = np.mean( logit, axis=1 )
-
-    ex = np.exp(logit)
-    s = ex.sum(axis=1,keepdims=True)
-    p = ex/s
-    return p
-
-def prediction( clf, X, proba_max=0.99999, n_aug=10 ):
-    Y_pred = clf.predict_proba(X)
-    Y_pred = np.array(Y_pred)
-    Y_pred = softmax_proba(Y_pred, proba_max, n_aug)
-    return Y_pred
+    return X, np.array(Y)
 
 def acc( Y_true, Y_pred ):
-    return ( np.argmax(Y_pred,axis=1) == np.argmax(Y_test,axis=1) ).astype(np.float).mean()
+    return ( Y_true == Y_pred ).astype(np.float).mean()
+
+def ensemble( Y_proba, n_aug ):
+    return Y_proba.reshape( Y_proba.shape[0]//n_aug, n_aug, Y_proba.shape[1] ).mean(axis=1)
 
 X_train, Y_train = dataset(dir_train, True,4)
 X_test, Y_test = dataset(dir_test, False,4)
 
-clf = MultiOutputClassifier( LogisticRegression() ).fit(X_train, Y_train)
-Y_pred = prediction( clf, X_test )
+clf = LogisticRegression(C=10,multi_class="multinomial",solver="newton-cg",warm_start=True).fit(X_train, Y_train)
+save_clf( "ensemble.pkl", clf )
+clf = load_clf( "ensemble.pkl" )
 
-Y_ind = np.argmax(Y_pred,axis=1)
-Y_true = np.argmax(Y_test,axis=1)
+Y_proba = clf.predict_proba(X_test)
+Y_proba = ensemble( Y_proba, 10 )
+Y_pred = np.argmax(Y_proba,axis=1)
+
 for i in range(Y_test.shape[0]):
-    cm = "OK" if Y_ind[i] == Y_true[i] else "NG"
-    print( "{:.4f}, {:d}, {:d}, {:s}".format( Y_pred[i,Y_ind[i]], Y_ind[i], Y_true[i], cm ) )
+    cm = "OK" if Y_pred[i] == Y_test[i] else "NG"
+    print( "{:.4f}, {:d}, {:d}, {:s}".format( Y_proba[i,Y_pred[i]], Y_pred[i], Y_test[i], cm ) )
 print()
 print( "Acc: {:.4f}".format( acc( Y_test, Y_pred ) ) )
-
