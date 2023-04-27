@@ -31,7 +31,7 @@ It includes four models images.
 
 - 1: [Robin Higgins](https://pixabay.com/users/robinhiggins-1321953/)
 
-- 2: [Sayaka Akane](https://www.pakutaso.com/person/woman/akanesaya/)
+- 2: [Saya Akane](https://www.pakutaso.com/person/woman/akanesaya/)
 
 - 3: [Yuka Kawamura](https://www.pakutaso.com/person/woman/kawamurayuka/)
 
