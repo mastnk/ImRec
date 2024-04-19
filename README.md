@@ -1,10 +1,12 @@
-# SCE.I501 Image Recognition
+# ESD.D508 Machine Learning for Innovation
+
+[Syllabus 2024](http://www.ocw.titech.ac.jp/index.php?module=General&action=T0300&GakubuCD=2&GakkaCD=321902&KeiCD=19&course=2&KougiCD=202436209&Nendo=2024&lang=EN&vid=03)
 
 ## checksum.py
 
 It is very simple sample code.
 
-## ImRec.ipynb
+## ML4Inov.ipynb
 
 It is JupyterNotebook for [Google Colab.](https://colab.research.google.com/)
 
