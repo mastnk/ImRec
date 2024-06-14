@@ -37,6 +37,17 @@ It includes four models images.
 
 - 3: [Yuka Kawamura](https://www.pakutaso.com/person/woman/kawamurayuka/)
 
+## YOLOv8sample/
+
+### YOLOv8sample.ipynb
+
+It is JupyterNotebook on [Google Colab.](https://colab.research.google.com/) for YOLOv8.
+
+### akihabara-6403506.jpg
+
+It is a sample image.
+
+
 ## Reference
 
 - [Pytorch cifar10 tutorial](https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html)
