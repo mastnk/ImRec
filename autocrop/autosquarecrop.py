@@ -7,6 +7,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 import matplotlib.pyplot as plt
 
 import torch
+import torchvision
 import torchvision.transforms as transforms
 
 import os
@@ -48,7 +49,8 @@ def save_with_colormap( filename, array, colormap="jet" ):
 
 def main( inputs, outputs, outputs_saliency, size ):
     # Load a pre-trained model
-    model = torch.hub.load('pytorch/vision:v0.9.0', 'vgg19', pretrained=True)
+#    model = torch.hub.load('pytorch/vision:v0.9.0', 'vgg19', pretrained=True)
+    model = torchvision.models.vgg19(weights="IMAGENET1K_V1", progress=False)
 
     os.makedirs( outputs, exist_ok=True)
     os.makedirs( outputs_saliency, exist_ok=True)
