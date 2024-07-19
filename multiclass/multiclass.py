@@ -140,7 +140,7 @@ class Classifier:
 
 ###
 def acc( Y_true, Y_pred ):
-    return ( Y_true == Y_pred ).astype(np.float).mean()
+    return ( Y_true == Y_pred ).astype(np.float32).mean()
 
 ###
 def main( images, cnn, tencrop, C  ):
