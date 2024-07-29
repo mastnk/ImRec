@@ -49,8 +49,15 @@ def save_with_colormap( filename, array, colormap="jet" ):
 
 def main( inputs, outputs, outputs_saliency, size ):
     # Load a pre-trained model
-#    model = torch.hub.load('pytorch/vision:v0.9.0', 'vgg19', pretrained=True)
-    model = torchvision.models.vgg19(weights="IMAGENET1K_V1", progress=False)
+    model = None
+    try:
+        model = torchvision.models.vgg19(weights="IMAGENET1K_V1", progress=False)
+    except:
+        pass
+
+    if( model is None ):
+        model = torchvision.models.vgg19(pretrained=True, progress=False)
+
 
     os.makedirs( outputs, exist_ok=True)
     os.makedirs( outputs_saliency, exist_ok=True)
@@ -74,7 +81,7 @@ def main( inputs, outputs, outputs_saliency, size ):
         save_with_colormap( os.path.join( outputs_saliency, title+".png" ), sal )
 
         if( s[0] < s[1] ): #width<height
-            image = image.transpose(Image.FLIP_ROTATE_90)
+            image = image.transpose(Image.ROTATE_90)
             sal = sal.transpose(1,0)
 
         x = sal.mean( axis=0 )
@@ -88,7 +95,7 @@ def main( inputs, outputs, outputs_saliency, size ):
         image = image.crop((left, top, right, bottom))
 
         if( s[0] < s[1] ): #width<height
-            image = image.transpose(Image.FLIP_ROTATE_270)
+            image = image.transpose(Image.ROTATE_270)
             sal = sal.transpose(1,0)
 
         image.save( os.path.join( outputs, title+".png" ) )
