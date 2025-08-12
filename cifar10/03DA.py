@@ -21,11 +21,15 @@ batch_size = 32
 epochs = 10
 
 # training data preparation
+p=0 # 0 for no Cutout nor Random Erase, 1 for Cutout or Random Erase
+v=0 # 0 for Cutout, "random" for Random Erase
 transform = transforms.Compose(
     [transforms.RandomHorizontalFlip(),
      transforms.RandomCrop(32, padding=4),
      transforms.ToTensor(),
-     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+     transforms.RandomErasing(p=p, value=v)
+     ])
 
 trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=2)
